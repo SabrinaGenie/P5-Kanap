@@ -96,4 +96,3 @@ function addItems(data) {
     }
         console.log(selectionCanapé)
 }
-
