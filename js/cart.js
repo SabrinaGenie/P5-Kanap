@@ -90,8 +90,6 @@ function populateHTML() {
 				})
 				// calculates number of canapes and populates HTML
 				calulateNoDeCanapes()
-
-				calulateTotalPrice()
 			}
 		})
 	})
@@ -106,6 +104,8 @@ function populateHTML() {
 	//list of items with this class .deleteItem
 	// runs deleteCanap when clicked
 	deleteProductInCart()
+
+	calulateTotalPrice()
 }
 
 // calculates the number of canapes and puts it in the HTML
@@ -113,9 +113,19 @@ function calulateNoDeCanapes() {
 	if (arrayCapanes.length === 1) {
 		document.querySelector("#totalQuantity").innerHTML = arrayCapanes[0]
 	} else {
+		const initialValues = 0
+		const sumWithInitial = arrayCapanes.reduce(
+			(previousValue, currentValue) => previousValue + currentValue,
+			initialValues
+		)
+		document.querySelector("#totalQuantity").innerHTML = sumWithInitial
+
+		console.log(sumWithInitial)
+		/*
 		arrayCapanes.reduce((start, no) => {
 			document.querySelector("#totalQuantity").innerHTML = start + no
 		})
+		*/
 	}
 }
 
@@ -124,10 +134,18 @@ function calulateTotalPrice() {
 	if (pricesArray.length === 1) {
 		document.querySelector("#totalPrice").innerText = pricesArray[0].price
 	} else {
-		pricesArray.reduce((price, priceNo) => {
-			document.querySelector("#totalPrice").innerText =
-				price.price + priceNo.price
+		let pricesOnly = []
+		pricesArray.forEach((e) => {
+			pricesOnly.push(e.quantity * e.price)
+			// console.log(pricesOnly)
 		})
+		const initialValue = 0
+		const sumWithInitial = pricesOnly.reduce(
+			(previousValue, currentValue) => previousValue + currentValue,
+			initialValue
+		)
+		document.querySelector("#totalPrice").innerText = sumWithInitial
+		calulateNoDeCanapes()
 	}
 }
 
@@ -135,6 +153,11 @@ function calulateTotalPrice() {
 function changeNoDeCapanes(elem) {
 	let elemIndx = Number(elem.target.getAttribute("data-index"))
 	let elemValue = Number(elem.target.value)
+	if (elemValue > 100) {
+		alert("Vous pouvez commander jusqu'à 100 canapés")
+		elem.target.value = 100
+		elemValue = 100
+	}
 	productInLocalStorage[elemIndx].quantity = elemValue
 	// save in localStorage
 	localStorage.setItem("produits", JSON.stringify(productInLocalStorage))
@@ -148,13 +171,13 @@ function changeNoDeCapanes(elem) {
 			}
 		})
 	})
-	calulateTotalPrice()
+	// calulateTotalPrice()
 	//change number of canapes
 	arrayCapanes = []
 	pricesArray.forEach((priceCanap) => {
 		arrayCapanes.push(priceCanap.quantity)
 	})
-	calulateNoDeCanapes()
+	calulateTotalPrice()
 }
 
 // deletes one sofa from the list
